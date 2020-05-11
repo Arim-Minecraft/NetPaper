@@ -1,0 +1,569 @@
+From c3188fb2fb98dd9837b5d9f4ddbcae29842d5fec Mon Sep 17 00:00:00 2001
+From: A248 <anandebeh@gmail.com>
+Date: Mon, 11 May 2020 11:10:07 -0400
+Subject: [PATCH] NetPaper: Add slf4j binding
+
+
+diff --git a/src/main/java/org/slf4j/impl/StaticLoggerBinder.java b/src/main/java/org/slf4j/impl/StaticLoggerBinder.java
+new file mode 100644
+index 00000000..5f110fc0
+--- /dev/null
++++ b/src/main/java/org/slf4j/impl/StaticLoggerBinder.java
+@@ -0,0 +1,76 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package org.slf4j.impl;
++
++import org.slf4j.ILoggerFactory;
++import org.slf4j.spi.LoggerFactoryBinder;
++
++import space.arim.netpaper.slf4j.NetPaperLoggerFactory;
++
++/**
++ * Main slf4j binding, for loggers
++ * 
++ * @author A248
++ *
++ */
++public class StaticLoggerBinder implements LoggerFactoryBinder {
++	
++	/**
++	 * Declare the version of the SLF4J API this implementation is compiled against.
++	 * The value of this field is modified with each major release.
++	 */
++	// to avoid constant folding by the compiler, this field must *not* be final
++	public static String REQUESTED_API_VERSION = "1.7.25"; // !final
++
++	private static final String loggerFactoryClassStr = NetPaperLoggerFactory.class.getName();
++
++	/**
++	 * The unique instance of this class.
++	 */
++	private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
++
++	/**
++	 * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method
++	 * should always be the same object
++	 */
++	private final ILoggerFactory loggerFactory;
++
++	/**
++	 * Return the singleton of this class.
++	 *
++	 * @return the StaticLoggerBinder singleton
++	 */
++	public static final StaticLoggerBinder getSingleton() {
++		return SINGLETON;
++	}
++
++	private StaticLoggerBinder() {
++		loggerFactory = new NetPaperLoggerFactory();
++	}
++
++	@Override
++	public ILoggerFactory getLoggerFactory() {
++		return loggerFactory;
++	}
++
++	@Override
++	public String getLoggerFactoryClassStr() {
++		return loggerFactoryClassStr;
++	}
++}
+diff --git a/src/main/java/org/slf4j/impl/StaticMDCBinder.java b/src/main/java/org/slf4j/impl/StaticMDCBinder.java
+new file mode 100644
+index 00000000..c7c0cacd
+--- /dev/null
++++ b/src/main/java/org/slf4j/impl/StaticMDCBinder.java
+@@ -0,0 +1,64 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package org.slf4j.impl;
++
++import org.slf4j.spi.MDCAdapter;
++
++import space.arim.netpaper.slf4j.NetPaperMDCAdapter;
++
++/**
++ * MDC binding, also required for slf4j
++ * 
++ * @author A248
++ *
++ */
++public class StaticMDCBinder {
++	
++	/**
++	 * The unique instance of this class.
++	 */
++	public static final StaticMDCBinder SINGLETON = new StaticMDCBinder();
++
++	private StaticMDCBinder() {
++		
++	}
++
++	/**
++	 * Return the singleton of this class.
++	 *
++	 * @return the StaticMDCBinder singleton
++	 * @since 1.7.14
++	 */
++	public static final StaticMDCBinder getSingleton() {
++		return SINGLETON;
++	}
++
++	/**
++	 * Currently this method always returns an instance of {@link BasicMDCAdapter}.
++	 *
++	 * @return never null.
++	 */
++	public MDCAdapter getMDCA() {
++		return new NetPaperMDCAdapter();
++	}
++
++	public String getMDCAdapterClassStr() {
++		return NetPaperMDCAdapter.class.getName();
++	}
++}
+diff --git a/src/main/java/org/slf4j/impl/StaticMarkerBinder.java b/src/main/java/org/slf4j/impl/StaticMarkerBinder.java
+new file mode 100644
+index 00000000..2d86db0d
+--- /dev/null
++++ b/src/main/java/org/slf4j/impl/StaticMarkerBinder.java
+@@ -0,0 +1,50 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package org.slf4j.impl;
++
++import org.slf4j.IMarkerFactory;
++import org.slf4j.spi.MarkerFactoryBinder;
++
++import space.arim.netpaper.slf4j.NetPaperMarkerFactory;
++
++/**
++ * Marker binding, required for slf4j
++ * 
++ * @author A248
++ *
++ */
++public class StaticMarkerBinder implements MarkerFactoryBinder {
++	
++	/**
++	 * The unique instance of this class.
++	 */
++	public static final StaticMarkerBinder SINGLETON = new StaticMarkerBinder();
++
++	private final IMarkerFactory markerFactory = new NetPaperMarkerFactory();
++
++	@Override
++	public IMarkerFactory getMarkerFactory() {
++		return markerFactory;
++	}
++
++	@Override
++	public String getMarkerFactoryClassStr() {
++		return NetPaperMarkerFactory.class.getName();
++	}
++}
+diff --git a/src/main/java/space/arim/netpaper/slf4j/NetPaperLogger.java b/src/main/java/space/arim/netpaper/slf4j/NetPaperLogger.java
+new file mode 100644
+index 00000000..9ac7c1f7
+--- /dev/null
++++ b/src/main/java/space/arim/netpaper/slf4j/NetPaperLogger.java
+@@ -0,0 +1,193 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package space.arim.netpaper.slf4j;
++
++import org.apache.logging.log4j.Logger;
++
++import org.slf4j.helpers.MarkerIgnoringBase;
++
++public class NetPaperLogger extends MarkerIgnoringBase {
++
++	/**
++	 * Serial version uid
++	 */
++	private static final long serialVersionUID = -3784255704418866575L;
++	
++	private final Logger logger;
++	
++	NetPaperLogger(Logger logger) {
++		this.logger = logger;
++	}
++
++	@Override
++	public String getName() {
++		return logger.getName();
++	}
++
++	@Override
++	public boolean isTraceEnabled() {
++		return logger.isTraceEnabled();
++	}
++
++	@Override
++	public void trace(String msg) {
++		logger.trace(msg);
++	}
++
++	@Override
++	public void trace(String format, Object arg) {
++		logger.trace(format, arg);
++	}
++
++	@Override
++	public void trace(String format, Object arg1, Object arg2) {
++		logger.trace(format, arg1, arg2);
++	}
++
++	@Override
++	public void trace(String format, Object... arguments) {
++		logger.trace(format, arguments);
++	}
++
++	@Override
++	public void trace(String msg, Throwable t) {
++		logger.trace(msg, t);
++	}
++
++	@Override
++	public boolean isDebugEnabled() {
++		return logger.isDebugEnabled();
++	}
++
++	@Override
++	public void debug(String msg) {
++		logger.debug(msg);
++	}
++
++	@Override
++	public void debug(String format, Object arg) {
++		logger.debug(format, arg);
++	}
++
++	@Override
++	public void debug(String format, Object arg1, Object arg2) {
++		logger.debug(format, arg1, arg2);
++	}
++
++	@Override
++	public void debug(String format, Object... arguments) {
++		logger.debug(format, arguments);
++	}
++
++	@Override
++	public void debug(String msg, Throwable t) {
++		logger.debug(msg, t);
++	}
++
++	@Override
++	public boolean isInfoEnabled() {
++		return logger.isInfoEnabled();
++	}
++
++	@Override
++	public void info(String msg) {
++		logger.info(msg);
++	}
++
++	@Override
++	public void info(String format, Object arg) {
++		logger.info(format, arg);
++	}
++
++	@Override
++	public void info(String format, Object arg1, Object arg2) {
++		logger.info(format, arg1, arg2);
++	}
++
++	@Override
++	public void info(String format, Object... arguments) {
++		logger.info(format, arguments);
++	}
++
++	@Override
++	public void info(String msg, Throwable t) {
++		logger.info(msg, t);
++	}
++
++	@Override
++	public boolean isWarnEnabled() {
++		return logger.isWarnEnabled();
++	}
++
++	@Override
++	public void warn(String msg) {
++		logger.warn(msg);
++	}
++
++	@Override
++	public void warn(String format, Object arg) {
++		logger.warn(format, arg);
++	}
++
++	@Override
++	public void warn(String format, Object... arguments) {
++		logger.warn(format, arguments);
++	}
++
++	@Override
++	public void warn(String format, Object arg1, Object arg2) {
++		logger.warn(format, arg1, arg2);
++	}
++
++	@Override
++	public void warn(String msg, Throwable t) {
++		logger.warn(msg, t);
++	}
++
++	@Override
++	public boolean isErrorEnabled() {
++		return logger.isErrorEnabled();
++	}
++
++	@Override
++	public void error(String msg) {
++		logger.error(msg);
++	}
++
++	@Override
++	public void error(String format, Object arg) {
++		logger.error(format, arg);
++	}
++
++	@Override
++	public void error(String format, Object arg1, Object arg2) {
++		logger.error(format, arg1, arg2);
++	}
++
++	@Override
++	public void error(String format, Object... arguments) {
++		logger.error(format, arguments);
++	}
++
++	@Override
++	public void error(String msg, Throwable t) {
++		logger.error(msg, t);
++	}
++
++}
+diff --git a/src/main/java/space/arim/netpaper/slf4j/NetPaperLoggerFactory.java b/src/main/java/space/arim/netpaper/slf4j/NetPaperLoggerFactory.java
+new file mode 100644
+index 00000000..276f6c3c
+--- /dev/null
++++ b/src/main/java/space/arim/netpaper/slf4j/NetPaperLoggerFactory.java
+@@ -0,0 +1,43 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package space.arim.netpaper.slf4j;
++
++import java.util.Objects;
++
++import org.apache.logging.log4j.LogManager;
++
++import org.slf4j.ILoggerFactory;
++import org.slf4j.Logger;
++
++/**
++ * Logger factory implementation for NetPaper.
++ * 
++ * @author A248
++ *
++ */
++public class NetPaperLoggerFactory implements ILoggerFactory {
++	
++	@Override
++	public Logger getLogger(String name) {
++		Objects.requireNonNull(name, "Logger name must not be null");
++		return new NetPaperLogger(
++				name.equals(Logger.ROOT_LOGGER_NAME) ? LogManager.getRootLogger() : LogManager.getLogger(name));
++	}
++
++}
+diff --git a/src/main/java/space/arim/netpaper/slf4j/NetPaperMDCAdapter.java b/src/main/java/space/arim/netpaper/slf4j/NetPaperMDCAdapter.java
+new file mode 100644
+index 00000000..b1f7c93b
+--- /dev/null
++++ b/src/main/java/space/arim/netpaper/slf4j/NetPaperMDCAdapter.java
+@@ -0,0 +1,59 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package space.arim.netpaper.slf4j;
++
++import java.util.Map;
++
++import org.apache.logging.log4j.ThreadContext;
++
++import org.slf4j.spi.MDCAdapter;
++
++public class NetPaperMDCAdapter implements MDCAdapter {
++
++    @Override
++    public void put(String key, String val) {
++        ThreadContext.put(key, val);
++    }
++
++    @Override
++    public String get(String key) {
++        return ThreadContext.get(key);
++    }
++
++    @Override
++    public void remove(String key) {
++        ThreadContext.remove(key);
++    }
++
++    @Override
++    public void clear() {
++        ThreadContext.clear();
++    }
++
++    @Override
++    public Map<String, String> getCopyOfContextMap() {
++        return ThreadContext.getContext();
++    }
++
++	@Override
++	public void setContextMap(Map<String, String> contextMap) {
++        ThreadContext.clear();
++        contextMap.forEach(ThreadContext::put);
++	}
++}
+diff --git a/src/main/java/space/arim/netpaper/slf4j/NetPaperMarkerFactory.java b/src/main/java/space/arim/netpaper/slf4j/NetPaperMarkerFactory.java
+new file mode 100644
+index 00000000..678f972c
+--- /dev/null
++++ b/src/main/java/space/arim/netpaper/slf4j/NetPaperMarkerFactory.java
+@@ -0,0 +1,33 @@
++/* 
++ * NetPaper-Server
++ * Copyright © 2020 Anand Beh <https://www.arim.space>
++ * 
++ * NetPaper-Server is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ * 
++ * NetPaper-Server is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ * 
++ * You should have received a copy of the GNU General Public License
++ * along with NetPaper-Server. If not, see <https://www.gnu.org/licenses/>
++ * and navigate to version 3 of the GNU General Public License.
++ */
++package space.arim.netpaper.slf4j;
++
++import org.slf4j.helpers.BasicMarkerFactory;
++
++/**
++ * Extending BasicMarkerFactory in case we ever need to add anything or make a custom implementation.
++ * 
++ * @author A248
++ *
++ */
++public class NetPaperMarkerFactory extends BasicMarkerFactory {
++
++
++
++}
+-- 
+2.20.1 (Apple Git-117)
+
