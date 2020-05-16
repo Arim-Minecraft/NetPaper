@@ -1,0 +1,22 @@
+From a5271b78e03930f8b255ee0c3eda8db9ad77142b Mon Sep 17 00:00:00 2001
+From: A248 <anandebeh@gmail.com>
+Date: Sat, 16 May 2020 17:25:53 -0400
+Subject: [PATCH] Readd logger name in log4j2.xml
+
+
+diff --git a/src/main/resources/log4j2.xml b/src/main/resources/log4j2.xml
+index f37d1c2d..7bb1ea58 100644
+--- a/src/main/resources/log4j2.xml
++++ b/src/main/resources/log4j2.xml
+@@ -3,7 +3,7 @@
+     <Appenders>
+         <Console name="WINDOWS_COMPAT" target="SYSTEM_OUT"></Console>
+         <Queue name="TerminalConsole">
+-            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
++            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+         </Queue>
+         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+-- 
+2.20.1 (Apple Git-117)
+
