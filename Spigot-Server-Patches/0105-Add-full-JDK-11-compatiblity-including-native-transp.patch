@@ -1,0 +1,112 @@
+From ca441fa7db4baa271f5bcb185d32b98c2be4a369 Mon Sep 17 00:00:00 2001
+From: A248 <anandebeh@gmail.com>
+Date: Sat, 16 May 2020 13:28:54 -0400
+Subject: [PATCH] Add full JDK 11 compatiblity, including native transport
+
+Utilises fork of Netty 4.0.34.Final with sufficient backported updates.
+Updates shade plugin and specialsource plugins for bytecode
+compatibility. Relevant repositories are included in order that NetPaper
+may be built from source.
+
+diff --git a/pom.xml b/pom.xml
+index 0f404480..f52f090c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -36,14 +36,23 @@
+     <dependencies>
+ 		<!-- NetPaper: update Netty dependencies, add slf4j dependency -->
+     	<dependency>
+-    		<groupId>io.netty</groupId>
++    		<!-- Our special netty fork, updated from Netty 4.0.34.Final for Java 11 -->
++    		<groupId>space.arim.netpaper</groupId>
+     		<artifactId>netty-all</artifactId>
+     		<version>${netty.version}</version>
+     	</dependency>
+ 		<dependency>
++			<!-- The native transport, which we didn't modify and is separate from netty-all -->
+     		<groupId>io.netty</groupId>
+     		<artifactId>netty-transport-native-epoll</artifactId>
+     		<version>${netty.version}</version>
++    		<classifier>linux-x86_64</classifier>
++    		<exclusions>
++    			<exclusion>
++    				<groupId>*</groupId>
++    				<artifactId>*</artifactId>
++    			</exclusion>
++    		</exclusions>
+     	</dependency>
+     	<dependency>
+     		<groupId>org.slf4j</groupId>
+@@ -124,11 +133,17 @@
+             <id>destroystokyo</id>
+             <url>https://ci.destroystokyo.com/plugin/repository/everything/</url>
+         </pluginRepository>
++        <!-- NetPaper: Add our repo for our Java 11 version of SpecialSource -->
++		<pluginRepository>
++			<id>arim-repo</id>
++			<url>https://dl.cloudsmith.io/public/anand-beh/arim-repo/maven/</url>
++		</pluginRepository>
++		<!-- NetPaper end -->
+     </pluginRepositories>
+ 
+     <!-- This builds a completely 'ready to start' jar with all dependencies inside -->
+     <build>
+-        <defaultGoal>install</defaultGoal>
++        <finalName>${project.name}</finalName><!-- NetPaper: add finalName remove defaultGoal -->
+         <plugins>
+             <plugin>
+             <groupId>com.lukegb.mojo</groupId>
+@@ -189,7 +204,7 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+-                <version>2.3</version>
++                <version>3.2.3</version><!-- NetPaper: Update shade plugin for Java 11 compatibility -->
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+@@ -202,6 +217,8 @@
+                         		<filter>
+                         			<artifact>org.spigotmc:minecraft-server</artifact>
+                         			<excludes>
++                        				<exclude>META-INF/io.netty.versions.properties</exclude>
++                        				<exclude>META-INF/native/libnetty-transport-native-epoll.so</exclude>
+                         				<exclude>io/netty/**</exclude>
+                         			</excludes>
+                         		</filter>
+@@ -242,9 +259,16 @@
+             </plugin>
+             <!-- Gotta go after shade plugin -->
+             <plugin>
+-                <groupId>net.md-5</groupId>
++            	<!-- NetPaper: Update SpecialSource details -->
++            	<!-- Explanation:
++            		For JDK 11 bytecode, we require an updated version of SpecialSource, which uses the correct version of the
++            		ASM as a dependency. SpecialSource is now split into the main library and SpecialSourceMP, the maven plugin.
++            		So we fork the most up-to-date SpecialSourceMP, and set its compiler compatibility to 11.
++            	 -->
++                <groupId>space.arim.netpaper</groupId>
+                 <artifactId>specialsource-maven-plugin</artifactId>
+-                <version>1.2.1</version>
++                <version>1.3-SNAPSHOT</version>
++                <!-- NetPaper end -->
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+@@ -291,4 +315,13 @@
+             </plugin>
+         </plugins>
+     </build>
++    
++    <!-- NetPaper: Add our repository used for updated Netty dependencies -->
++    <repositories>
++		<repository>
++			<id>arim-repo</id>
++			<url>https://dl.cloudsmith.io/public/anand-beh/arim-repo/maven/</url>
++		</repository>
++    </repositories>
++    <!-- NetPaper end -->
+ </project>
+-- 
+2.20.1 (Apple Git-117)
+

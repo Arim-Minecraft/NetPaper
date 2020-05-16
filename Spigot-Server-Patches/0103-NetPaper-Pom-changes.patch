@@ -1,0 +1,78 @@
+From 78deeccbcf3784e70b86bea2f57624919357826f Mon Sep 17 00:00:00 2001
+From: A248 <anandebeh@gmail.com>
+Date: Mon, 11 May 2020 12:22:10 -0400
+Subject: [PATCH] NetPaper: Pom changes
+
+
+diff --git a/pom.xml b/pom.xml
+index 6aaba502..68520c3a 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,12 +1,13 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+-    <groupId>org.github.paperspigot</groupId>
+-    <artifactId>paperspigot</artifactId>
+-    <packaging>jar</packaging>
++    <!-- NetPaper: Update project identifiers -->
++    <groupId>space.arim.netpaper</groupId>
++    <artifactId>server</artifactId>
+     <version>1.8.8-R0.1-SNAPSHOT</version>
+-    <name>PaperSpigot</name>
+-    <url>https://hub.spigotmc.org/stash/projects/PAPER/</url>
++    <name>NetPaper</name>
++    <url>https://github.com/Arim-Minecraft/NetPaper/</url>
++    <!-- NetPaper end -->
+ 
+     <properties>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+@@ -16,6 +17,9 @@
+         <minecraft_version>1_8_R3</minecraft_version>
+         <buildtag.prefix>git-Bukkit-</buildtag.prefix>
+         <buildtag.suffix></buildtag.suffix>
++		<!-- NetPaper: Netty version -->
++        <netty.version>4.0.34.Final</netty.version>
++        <!-- NetPaper end -->
+         <!--PaperSpigot - Bump to 1.8 - This will haunt me -->
+         <maven.compiler.source>1.8</maven.compiler.source>
+         <maven.compiler.target>1.8</maven.compiler.target>
+@@ -29,6 +33,18 @@
+     </parent>
+ 
+     <dependencies>
++		<!-- NetPaper: update Netty dependencies -->
++    	<dependency>
++    		<groupId>io.netty</groupId>
++    		<artifactId>netty-all</artifactId>
++    		<version>${netty.version}</version>
++    	</dependency>
++		<dependency>
++    		<groupId>io.netty</groupId>
++    		<artifactId>netty-transport-native-epoll</artifactId>
++    		<version>${netty.version}</version>
++    	</dependency>
++    	<!-- NetPaper end -->
+         <dependency>
+             <groupId>net.sf.trove4j</groupId>
+             <artifactId>trove4j</artifactId>
+@@ -175,6 +191,16 @@
+                             <goal>shade</goal>
+                         </goals>
+                         <configuration>
++							<!-- NetPaper: Remove old netty classes -->
++                        	<filters>
++                        		<filter>
++                        			<artifact>org.spigotmc:minecraft-server</artifact>
++                        			<excludes>
++                        				<exclude>io/netty/**</exclude>
++                        			</excludes>
++                        		</filter>
++                        	</filters>
++                        	<!-- NetPaper end -->
+                             <relocations>
+                                 <relocation>
+                                     <pattern>joptsimple</pattern>
+-- 
+2.20.1 (Apple Git-117)
+

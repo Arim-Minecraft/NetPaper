@@ -1,0 +1,45 @@
+From 3c5f6ef38237b6f2a4a93295dcecc92dfc1d6d16 Mon Sep 17 00:00:00 2001
+From: A248 <anandebeh@gmail.com>
+Date: Mon, 11 May 2020 12:37:20 -0400
+Subject: [PATCH] NetPaper: Add slf4j dependency to pom
+
+
+diff --git a/pom.xml b/pom.xml
+index 68520c3a..0f404480 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -17,8 +17,9 @@
+         <minecraft_version>1_8_R3</minecraft_version>
+         <buildtag.prefix>git-Bukkit-</buildtag.prefix>
+         <buildtag.suffix></buildtag.suffix>
+-		<!-- NetPaper: Netty version -->
++		<!-- NetPaper: Netty and slf4j versions -->
+         <netty.version>4.0.34.Final</netty.version>
++        <slf4j.version>1.7.25</slf4j.version>
+         <!-- NetPaper end -->
+         <!--PaperSpigot - Bump to 1.8 - This will haunt me -->
+         <maven.compiler.source>1.8</maven.compiler.source>
+@@ -33,7 +34,7 @@
+     </parent>
+ 
+     <dependencies>
+-		<!-- NetPaper: update Netty dependencies -->
++		<!-- NetPaper: update Netty dependencies, add slf4j dependency -->
+     	<dependency>
+     		<groupId>io.netty</groupId>
+     		<artifactId>netty-all</artifactId>
+@@ -44,6 +45,11 @@
+     		<artifactId>netty-transport-native-epoll</artifactId>
+     		<version>${netty.version}</version>
+     	</dependency>
++    	<dependency>
++    		<groupId>org.slf4j</groupId>
++    		<artifactId>slf4j-api</artifactId>
++    		<version>${slf4j.version}</version>
++    	</dependency>
+     	<!-- NetPaper end -->
+         <dependency>
+             <groupId>net.sf.trove4j</groupId>
+-- 
+2.20.1 (Apple Git-117)
+
