@@ -1,9 +1,7 @@
-PaperSpigot [![CI Status](http://ci.destroystokyo.com/buildStatus/icon?job=PaperSpigot)](http://ci.destroystokyo.com/job/PaperSpigot/)
+NetPaper
 ===========
 
-High performance Spigot fork that aims to fix gameplay and mechanics inconsistencies.
-
-[IRC Support and Project Discussion](http://irc.spi.gt/iris/?channels=PaperSpigot)
+Fork of Paper 1.8.8 designed for Java 11 which includes a built-in slf4j binding. Unlike other forks, NetPaper is oriented toward developers. Say goodbye to JUL logging. Embrace Java 11 features.
 
 
 
@@ -15,18 +13,17 @@ https://ci.destroystokyo.com/job/PaperSpigot/
 
 Run the PaperClip jar directly from your server. Just like old times
 
-PaperSpigot requires **JRE 8** or above.
+NetPaper is designed for **JDK 11** or above. Do not complain if you use it on Java 8 and experience errors.
 
 
 How To (Compiling From Source)
 ------
-To compile PaperSpigot, you need JDK8, maven, and an internet connection.
+To compile NetPaper, you need JDK 11, git, maven, and an internet connection.
 
-Clone this repo, run ./build.sh from *bash*, get files.
+Clone this repo using git and run ./build.sh from *bash*. The server JAR will be in PaperSpigot-Server/target/NetPaper.jar.
 
 Special Thanks To:
 -------------
 
-![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
-
-[YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting PaperSpigot an OSS license so that we can make our software the best it can be.
+* The netty developers. Minecraft relies on netty's fast performance.
+* PaperMC of course! For making PaperSpigot to begin with.
