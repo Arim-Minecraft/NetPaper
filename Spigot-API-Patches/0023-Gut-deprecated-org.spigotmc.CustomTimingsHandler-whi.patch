@@ -1,0 +1,70 @@
+From c6ab311228d54734ad98db384e477f371bff6ce9 Mon Sep 17 00:00:00 2001
+From: A248 <anandebeh@gmail.com>
+Date: Thu, 18 Jun 2020 09:34:27 -0400
+Subject: [PATCH] Gut deprecated org.spigotmc.CustomTimingsHandler which used
+ sun.reflect
+
+Method and constructor signatures are kept to ensure plugins keep
+running. However, no actual timings will be collected.
+
+diff --git a/src/main/java/org/spigotmc/CustomTimingsHandler.java b/src/main/java/org/spigotmc/CustomTimingsHandler.java
+index 7e89b97b..1eb4d51f 100644
+--- a/src/main/java/org/spigotmc/CustomTimingsHandler.java
++++ b/src/main/java/org/spigotmc/CustomTimingsHandler.java
+@@ -23,17 +23,7 @@
+  */
+ package org.spigotmc;
+ 
+-import org.bukkit.Bukkit;
+ import org.bukkit.plugin.AuthorNagException;
+-import org.bukkit.plugin.Plugin;
+-import co.aikar.timings.NullTimingHandler;
+-import co.aikar.timings.Timing;
+-import co.aikar.timings.Timings;
+-import co.aikar.timings.TimingsManager;
+-import sun.reflect.Reflection;
+-
+-import java.lang.reflect.Method;
+-import java.util.logging.Level;
+ 
+ /**
+  * This is here for legacy purposes incase any plugin used it.
+@@ -45,32 +35,14 @@ import java.util.logging.Level;
+  */
+ @Deprecated
+ public final class CustomTimingsHandler {
+-    private final Timing handler;
+ 
+-    public CustomTimingsHandler(String name) {
+-        Timing timing;
++    public CustomTimingsHandler(@SuppressWarnings("unused") String name) {
+ 
+-        Plugin plugin = null;
+-        try {
+-             plugin = TimingsManager.getPluginByClassloader(Reflection.getCallerClass(2));
+-        } catch (Exception ignored) {}
+ 
+         new AuthorNagException("Deprecated use of CustomTimingsHandler. Please Switch to Timings.of ASAP").printStackTrace();
+-        if (plugin != null) {
+-            timing = Timings.of(plugin, "(Deprecated API) " + name);
+-        } else {
+-            try {
+-                final Method ofSafe = TimingsManager.class.getMethod("getHandler", String.class, String.class, Timing.class, boolean.class);
+-                timing = (Timing) ofSafe.invoke("Minecraft", "(Deprecated API) " + name, null, true);
+-            } catch (Exception e) {
+-                Bukkit.getLogger().log(Level.SEVERE, "This handler could not be registered");
+-                timing = Timings.NULL_HANDLER;
+-            }
+-        }
+-        handler = timing;
+     }
+ 
+-    public void startTiming() { handler.startTiming(); }
+-    public void stopTiming() { handler.stopTiming(); }
++    public void startTiming() {  }
++    public void stopTiming() {  }
+ 
+ }
+-- 
+2.20.1 (Apple Git-117)
+
